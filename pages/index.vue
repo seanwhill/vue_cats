@@ -1,38 +1,37 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        code-challenge
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Nuxt Docs
-        </a>
-        <a
-          href="https://tailwindcss.com/docs"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          Tailwind Docs
-        </a>
-      </div>
-    </div>
+  <div class="flex-container">
+      <Animals :animals="animals"/>
   </div>
 </template>
 
-<script>
-export default {}
+<script setup>
+
+export default {
+  async fetch () {
+    let res = await fetch('https://vue-mock-api.openlypreview.com/api/cats')
+    res = await res.json()
+
+    // TODO: Can potentially modify the width or height if a certain standard is desired.
+    res.forEach((animal) => {
+      const sizeRegex = /&w=\d*/i
+      animal.image = animal.image.replace(sizeRegex, '&w=400&h=400')
+      console.log(animal.image)
+    })
+
+    this.animals = res
+  },
+  data () {
+    return {
+      animals: []
+    }
+  }
+
+}
+
 </script>
 
 <style>
-.container {
+.flex-container {
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
