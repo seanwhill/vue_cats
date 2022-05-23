@@ -1,9 +1,11 @@
 <template>
 <div class="animals flex flex-wrap -mx-5">
   <AnimalCard
-    v-for="animal in animals"
-    :key="animal.breed"
+    v-for="animal in displayedAnimals"
+    :key="animal.id"
     :animal="animal"
+    :likeAnimal="likeAnimal"
+    @like-animal="$emit('like-animal', animal.id)"
     class="mb-10 mr-10"/>
 </div>
 
@@ -12,9 +14,15 @@
 <script>
 export default {
   props: {
-    animals: {
-      type: Array,
-      default: () => []
+    animals: Array,
+    likeAnimal: Function
+  },
+  computed: {
+    displayedAnimals () {
+      return this.animals.filter((animal) => {
+        console.log(animal)
+        return animal.display
+      })
     }
   }
 }
