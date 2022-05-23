@@ -6,7 +6,7 @@
       <CheckboxFilter :filterData="categoryFilter" @check-menu="checkCategoryMenuItem"/>
     </div>
     <div class="flex-container">
-        <Animals :animals="animals" @like-animal="likeAnimal"/>
+        <Animals :animals="animals" @like-animal="likeAnimal" :selectedBreeds="selectedBreeds" :selectedCategories="selectedCategories"/>
     </div>
   </div>
 </template>
@@ -88,30 +88,9 @@ export default {
       const checkValue = !this.breedFilter.menuItems[id].checked
       this.breedFilter.menuItems[id].checked = checkValue
 
-      this.animals = this.animals.map((animal) => {
-        if (!checkValue && this.selectedCategories.size === 0 && this.selectedBreeds.size === 1) { // Unchecking the last filter box causing it to go back to default filter selection
-          animal.display = true
-        } else if (!checkValue && this.selectedBreeds.size === 1) { // Unchecking the last Breed Filter (Look at only the categories now )
-          if (this.selectedCategories.has(animal.category)) {
-            animal.display = true
-          }
-        } else if (breed === animal.breed) {
-          if (checkValue) {
-            if (this.selectedCategories.size === 0 || this.selectedCategories.has(animal.category)) { // Check the Animals whose Breeds overlap with other filters (Categories)
-              animal.display = true
-            } else {
-              animal.display = false // animal's category is not selected so it does not get displayed
-            }
-          } else if (!checkValue) {
-            animal.display = false
-          }
-        } else if (!this.selectedBreeds.has(animal.breed)) { // Do not display the breeds that are not selected
-          animal.display = false
-        }
-
-        return animal
-      })
-      checkValue ? this.selectedBreeds.add(breed) : this.selectedBreeds.delete(breed)
+      const selectedBreedsNew = new Set(this.selectedBreeds)
+      checkValue ? selectedBreedsNew.add(breed) : selectedBreedsNew.delete(breed)
+      this.selectedBreeds = selectedBreedsNew
     },
     checkCategoryMenuItem (id) { // TODO REFACTOR to better handle multiple filters
       const category = this.categoryFilter.menuItems[id].name
@@ -119,38 +98,31 @@ export default {
       const checkValue = !this.categoryFilter.menuItems[id].checked
       this.categoryFilter.menuItems[id].checked = checkValue
 
-      this.animals = this.animals.map((animal) => {
-        if (!checkValue && this.selectedBreeds.size === 0 && this.selectedCategories.size === 1) { // Unchecking the last filter box causing it to go back to default filter selection
-          animal.display = true
-        } else if (!checkValue && this.selectedCategories.size === 1) { // Unchecking the last Category Filter (Look at only the Breeds now )
-          if (this.selectedBreeds.has(animal.breed)) {
-            animal.display = true
-          }
-        } else if (category === animal.category) {
-          if (checkValue) {
-            if (this.selectedBreeds.size === 0 || this.selectedBreeds.has(animal.breed)) { // Check the Animals whose Categories overlap with other filters (Breeds)
-              animal.display = true
-            } else {
-              animal.display = false // animal's breed is not selected so it does not get displayed
-            }
-          } else if (!checkValue) {
-            animal.display = false
-          }
-        } else if (!this.selectedCategories.has(animal.category)) { // Do not display the Categories that are not selected
-          animal.display = false
-        }
-
-        return animal
-      })
-      checkValue ? this.selectedCategories.add(category) : this.selectedCategories.delete(category)
+      const selectedCategoriesNew = new Set(this.selectedCategories)
+      checkValue ? selectedCategoriesNew.add(category) : selectedCategoriesNew.delete(category)
+      this.selectedCategories = selectedCategoriesNew
     }
   },
   computed: {
     countLikes () {
       let likes = 0
       this.animals.forEach((animal) => {
-        if (animal.liked && animal.display) {
-          likes++
+        if (animal.liked) {
+          let display = false
+          // TODO used twice. Move to helper file
+          if (this.selectedBreeds.size === 0 && this.selectedCategories.size === 0) {
+            display = true
+          } else if (this.selectedBreeds.size === 0 && this.selectedCategories.size !== 0 && this.selectedCategories.has(animal.category)) {
+            display = true
+          } else if (this.selectedBreeds.size !== 0 && this.selectedCategories.size === 0 && this.selectedBreeds.has(animal.breed)) {
+            display = true
+          } else if (this.selectedBreeds.has(animal.breed) && this.selectedCategories.has(animal.category)) {
+            display = true
+          }
+
+          if (display) {
+            likes++
+          }
         }
       })
       return likes
