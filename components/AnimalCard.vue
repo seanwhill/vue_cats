@@ -46,7 +46,6 @@ export default {
   methods: {
     onLiked (id) {
       this.$emit('like-animal', id)
-      // this.likeAnimal(id)
     }
   }
 }
@@ -86,8 +85,8 @@ img {
 
 .img-overlay-wrap svg {
   position: absolute;
-  top: 10%;
-  left: 77%;
+  top: 2%;
+  left: 82%;
 }
 
 </style>
