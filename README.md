@@ -15,5 +15,3 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
-
-**Good luck!**
