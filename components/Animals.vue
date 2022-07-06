@@ -4,7 +4,6 @@
     v-for="animal in displayedAnimals"
     :key="animal.id"
     :animal="animal"
-    :likeAnimal="likeAnimal"
     @like-animal="$emit('like-animal', animal.id)"
     class="mb-10 mr-10"/>
 </div>
@@ -15,21 +14,30 @@
 export default {
   props: {
     animals: Array,
-    likeAnimal: Function,
     selectedBreeds: Set,
     selectedCategories: Set
   },
   computed: {
     displayedAnimals () {
       return this.animals.filter((animal) => {
+        // TODO SHOULD USE GUARD IF STATEMENTS
+        // let display = true
+
+        // if (this.selectedCategories.size !== 0 && !this.selectedCategories.has(animal.category)) {
+        //   display = false
+        // }
+        // if (this.selectedBreeds.size !== 0 && !this.selectedBreeds.has(animal.breed)) {
+        //   display = false
+        // }
+
+        // TODO used twice. Move to helper function
         let display = false
 
-        // TODO used twice. Move to helper file
         if (this.selectedBreeds.size === 0 && this.selectedCategories.size === 0) {
           display = true
-        } else if (this.selectedBreeds.size === 0 && this.selectedCategories.size !== 0 && this.selectedCategories.has(animal.category)) {
+        } else if (this.selectedBreeds.size === 0 && this.selectedCategories.has(animal.category)) {
           display = true
-        } else if (this.selectedBreeds.size !== 0 && this.selectedCategories.size === 0 && this.selectedBreeds.has(animal.breed)) {
+        } else if (this.selectedCategories.size === 0 && this.selectedBreeds.has(animal.breed)) {
           display = true
         } else if (this.selectedBreeds.has(animal.breed) && this.selectedCategories.has(animal.category)) {
           display = true

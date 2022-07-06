@@ -5,7 +5,7 @@
         <img class="w-full" :src="animal.image" :alt="animal.image">
 
         <svg
-        @click="onLiked(animal.id)"
+        @click="$emit('like-animal', animal.id)"
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6 heart"
         :fill="animal.liked ? '#fd45c9' : 'none'"
@@ -37,17 +37,19 @@ export default {
       type: Object,
       default: () => {}
     }
-  },
-  data () {
-    return {
-      liked: false
-    }
-  },
-  methods: {
-    onLiked (id) {
-      this.$emit('like-animal', id)
-    }
   }
+  // REMOVED BECAUSE IT WAS NOT USED. INITIAL APPROACH WAS TO HAVE A STATE FOR THE LIKED
+  // data () {
+  //   return {
+  //     liked: false
+  //   }
+  // },
+  // REMOVED can be simplified in the @click for liking
+  // methods: {
+  //   onLiked (id) {
+  //     this.$emit('like-animal', id)
+  //   }
+  // }
 }
 </script>
 <style scoped>

@@ -6,6 +6,7 @@
       <CheckboxFilter :filterData="categoryFilter" @check-menu="checkCategoryMenuItem"/>
     </div>
     <div class="flex-container">
+      <!-- Could've done animals computed and automatically looked for selected breeds and selected categories -->
         <Animals :animals="animals" @like-animal="likeAnimal" :selectedBreeds="selectedBreeds" :selectedCategories="selectedCategories"/>
     </div>
   </div>
@@ -15,7 +16,7 @@
 
 export default {
   async fetch () {
-    let res = await fetch('https://vue-mock-api.openlypreview.com/api/cats')
+    let res = await fetch('https://vue-mock-api.openlypreview.com/api/cats').catch((e) => { console.error(e) }) // Dicuss what to do on error
     res = await res.json()
 
     // set to know which breeds we've added already
@@ -44,7 +45,6 @@ export default {
       // animals default liked and displayed
       animal.id = animalId++
       animal.liked = false
-      animal.display = true
 
       // build breed filter menu items
       if (!breeds.has(animal.breed)) {
@@ -108,13 +108,23 @@ export default {
       let likes = 0
       this.animals.forEach((animal) => {
         if (animal.liked) {
+          // TODO SHOULD USE GUARD IF STATEMENTS
+          // let display = true
+
+          // if (this.selectedCategories.size !== 0 && !this.selectedCategories.has(animal.category)) {
+          //   display = false
+          // }
+          // if (this.selectedBreeds.size !== 0 && !this.selectedBreeds.has(animal.breed)) {
+          //   display = false
+          // }
+
           let display = false
           // TODO used twice. Move to helper file
           if (this.selectedBreeds.size === 0 && this.selectedCategories.size === 0) {
             display = true
-          } else if (this.selectedBreeds.size === 0 && this.selectedCategories.size !== 0 && this.selectedCategories.has(animal.category)) {
+          } else if (this.selectedBreeds.size === 0 && this.selectedCategories.has(animal.category)) {
             display = true
-          } else if (this.selectedBreeds.size !== 0 && this.selectedCategories.size === 0 && this.selectedBreeds.has(animal.breed)) {
+          } else if (this.selectedCategories.size === 0 && this.selectedBreeds.has(animal.breed)) {
             display = true
           } else if (this.selectedBreeds.has(animal.breed) && this.selectedCategories.has(animal.category)) {
             display = true
